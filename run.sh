@@ -24,7 +24,7 @@ function commitpush(){
 
 	git add -A
 	git commit -m "update source"
-	git push origin source
+
 
 	git checkout master
 	echo "to push master"
@@ -35,7 +35,6 @@ function commitpush(){
 
 	git add -A
 	git commit -m "deploy blog"
-	git push origin master
 	    
 	git checkout source
 }
