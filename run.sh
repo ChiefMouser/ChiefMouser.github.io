@@ -40,11 +40,11 @@ function commitpush(){
 	git checkout source
 }
 function startserver(){
-	/usr/local/bin/jekyll serve --host 0.0.0.0 --port 5000 --watch  1>/dev/null &
+	/usr/local/bin/jekyll serve --host 0.0.0.0 --port 5001 --watch  1>/dev/null &
 } 
 function prexe(){
-	$(which python3) /Users/C/.shell/seal
-	$(which python)  /Users/C/.shell/addtime
+	# $(which python3) /Users/C/.shell/seal
+	# $(which python)  /Users/C/.shell/addtime
 } 
 function helpinfo(){
 	echo "----------------------------------------------------------------------"   

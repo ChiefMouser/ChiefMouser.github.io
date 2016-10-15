@@ -18,13 +18,13 @@ defaults:
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
 #
-title : yaccai
+title : ChiefMouser
 tagline: Just write it!
 author :
-  name : Yaccai
-  email : yaccai@hotmail.com
-  github : https://github.com/yaccai
-  twitter : yaccai
+  name : ChiefMouser
+  email : ChiefMouser@hotmail.com
+  github : https://github.com/ChiefMouser
+  twitter : ChiefMouser
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
@@ -34,7 +34,7 @@ author :
 # Else if you are pushing to username.github.io, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://blog.yaccai.me
+production_url : http://blog.ChiefMouser.me
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
