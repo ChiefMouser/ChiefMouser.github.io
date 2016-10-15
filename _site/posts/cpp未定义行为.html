@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <head>
+    <meta charset="utf-8">
+    <title>cpp未定义行为</title>
+    
+    <meta name="author" content="Yaccai">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- <link href="/css/blog.css" rel="stylesheet" type="text/css" media="all"> -->
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/bootstrap.2.2.2.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/jquery.tocLight.js"></script>
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">yaccai</a>
+          <ul class="nav">
+            <li><a href="/explore.html">Explore / 浏览</a></li>
+            <li><a href="/archive.html">Archive / 存档</a></li>
+            <li><a href="/about.html">About / 关于</a></li>
+
+<!--             <li><a href="https://github.com/yaccai">Github</a></li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h11>cpp未定义行为 </h11>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span> </span>
+    </div>
+    <div class="content">
+      <div id="toc-container">
+  <table class="toc" id="toc">
+    <tbody>
+      <tr>
+        <td>
+          <div id="toctitle">
+            <h2>Contents</h2>
+          </div>
+          <ul>
+            <li class="toc_level-1 toc_section-1">
+              <a href="#tocAnchor-1-1"><span class="tocnumber">1</span> <span class="toctext">intro</span></a>
+            </li>
+            <li class="toc_level-1 toc_section-2">
+              <a href="#tocAnchor-1-2"><span class="tocnumber">2</span> <span class="toctext">常见未定义行为</span></a>
+            </li>
+            <li class="toc_level-1 toc_section-3">
+              <a href="#tocAnchor-1-3"><span class="tocnumber">3</span> <span class="toctext">例子</span></a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div><p>由于c/c++标准中的 undefined behavior 引起的问题</p>
+
+<p>对于@boost9 安全方面paper 的一些理解 太深奥了</p>
+
+<!-- more -->
+
+<h1 id="tocAnchor-1-1">intro</h1>
+
+<p>不适当的，自作聪明的编译器优化，导致许多在-o0下正常的代码，在高等级优化下出现问题</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="kt">char</span> <span class="o">*</span><span class="n">buf</span> <span class="o">=</span> <span class="p">...;</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">buf_end</span> <span class="o">=</span> <span class="p">...;</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="p">...;</span> <span class="k">if</span> <span class="p">(</span><span class="n">buf</span> <span class="o">+</span> <span class="n">len</span> <span class="o">&gt;=</span> <span class="n">buf_end</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">;</span> <span class="cm">/* len too large */</span> 
+<span class="k">if</span> <span class="p">(</span><span class="n">buf</span> <span class="o">+</span> <span class="n">len</span> <span class="o">&lt;</span> <span class="n">buf</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">;</span> <span class="cm">/* overflow, buf+len wrapped around */</span> <span class="cm">/* write to buf[0..len-1] */</span>
+</code></pre>
+</div>
+
+<p>由于c标准对指针溢出的情况，设置为未定义行为，编译器比如gcc就假设一切都正常，仿佛世界上就没有指针溢出的说法。这样后面代码的检测就会被编译器自行移除</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="k">struct</span> <span class="n">tun_struct</span> <span class="o">*</span><span class="n">tun</span> <span class="o">=</span> <span class="p">...;</span> 
+<span class="k">struct</span> <span class="n">sock</span> <span class="o">*</span><span class="n">sk</span> <span class="o">=</span> <span class="n">tun</span><span class="o">-&gt;</span><span class="n">sk</span><span class="p">;</span> 
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">tun</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">POLLERR</span><span class="p">;</span>
+<span class="cm">/* write to address based on tun */</span>
+</code></pre>
+</div>
+
+<p>在linux的内核中，对于0页面的指针通常是禁止的，所以指针tun是null的话，在前一句就会终结当前进程，即使0页面也已访问，下面的if语句也会检测到这种行为，进一步作出反应</p>
+
+<p>然而在gcc的实现中，由于tun-&gt;sk的出现，会想当然的的认为tun非null，因为即使是null，行为也是未定的。进一步认为下面对tun的检查也是多余的，于是在优化时被消除。</p>
+
+<p>从编译器的角度看 以上的bug都出现于程序员没有对语言有足够的了解。但是这些bug也确实过于subtle，而且如果不是编译器不适当的过度优化，完全可以避免。</p>
+
+<h1 id="tocAnchor-1-2">常见未定义行为</h1>
+
+<ul>
+  <li>指针溢出</li>
+  <li>解引用null</li>
+  <li>有符号整数溢出</li>
+  <li>除0</li>
+  <li>过多的移位</li>
+  <li>缓冲区溢出</li>
+  <li>绝对值溢出</li>
+  <li>内存释放后使用，realloc后使用，</li>
+  <li>overlapping memory copy</li>
+</ul>
+
+<h1 id="tocAnchor-1-3">例子</h1>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+</span> 
+<span class="kt">int</span> <span class="n">main</span><span class="p">(){</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">};</span>
+ 
+    <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">];</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+    </div>
+
+    <hr>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="categories#CSE-ref">
+    		CSE <span>8</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="tags#cpp-ref">cpp <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+
+
+    <div class="pagination pagination-lg">
+      
+      <ul>
+      
+        <li class="prev"><a href="/posts/%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7" title="下载工具">&larr; Previous（前一篇）</a></li>
+      
+        <li><a href="">Archive（目录）</a></li>
+      
+        <li class="next"><a href="/posts/%E5%A0%86%E7%9A%84%E5%B8%B8%E7%94%A8%E6%80%A7%E8%B4%A8%E5%92%8C%E6%93%8D%E4%BD%9C" title="堆的常用性质和操作">Next（后一篇） &rarr;</a></li>
+      
+      </ul>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).ready(
+        function expand() {
+            var node = $("h1")
+            for (var i = 0; i < node.length; i++) {
+                var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "    " + t.innerText
+            }
+
+            node = $("h2")
+            for (var i = 0; i < node.length; i++) {
+                  var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "   " + t.innerText
+            }
+
+            
+        }
+    );
+</script>
+    
+  </div>
+</div>
+
+      </div>
+      <hr/>
+      <center> <footer>
+        &copy; 2016 Yaccai with help from <a href="http://jekyllrb.com" target="_blank" title="The simple, blog-aware, static site generator.">Jekyll</a>. Hosted by <a href="https://pages.github.com/" target="_blank" title="GitHub Pages">GitHub</a>.
+        <br><br>
+      </footer> </center>
+
+
+    </div>
+
+
+  </body>
+</html>
+

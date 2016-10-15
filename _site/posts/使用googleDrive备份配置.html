@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <head>
+    <meta charset="utf-8">
+    <title>使用googleDrive备份配置</title>
+    
+    <meta name="author" content="Yaccai">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- <link href="/css/blog.css" rel="stylesheet" type="text/css" media="all"> -->
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/bootstrap.2.2.2.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/jquery.tocLight.js"></script>
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">yaccai</a>
+          <ul class="nav">
+            <li><a href="/explore.html">Explore / 浏览</a></li>
+            <li><a href="/archive.html">Archive / 存档</a></li>
+            <li><a href="/about.html">About / 关于</a></li>
+
+<!--             <li><a href="https://github.com/yaccai">Github</a></li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h11>使用googleDrive备份配置 </h11>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span> </span>
+    </div>
+    <div class="content">
+      <p>使用谷歌硬盘备份某些文件<br />
+首先要按照<a href="https://developers.google.com/api-client-library/python/samples/samples#running-samples">这里</a> 创建应用访问的权限和token<br />
+附属文件还有一个json</p>
+
+<!-- more -->
+
+<ol>
+  <li>pip3 install –upgrade google-api-python-client</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c"># coding:utf-8</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">apiclient.discovery</span> <span class="kn">import</span> <span class="n">build</span>
+<span class="kn">from</span> <span class="nn">httplib2</span> <span class="kn">import</span> <span class="n">Http</span>
+<span class="kn">from</span> <span class="nn">oauth2client</span> <span class="kn">import</span> <span class="nb">file</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">tools</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">tools</span><span class="o">.</span><span class="n">argparser</span><span class="p">])</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+<span class="k">except</span> <span class="nb">ImportError</span><span class="p">:</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'HOME'</span><span class="p">],</span> <span class="s">'.shell/bak'</span><span class="p">))</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"echo '-----------------------' &gt;&gt; up.log"</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">"date &gt;&gt; up.log"</span><span class="p">)</span>
+<span class="n">week</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="n">weekjsonfile</span> <span class="o">=</span> <span class="s">'week.json'</span>
+<span class="n">bakpath</span> <span class="o">=</span> <span class="s">'/tmp/for_gd'</span>
+<span class="n">stp</span> <span class="o">=</span> <span class="s">'~/Library/Application</span><span class="err">\</span><span class="s"> Support/Sublime</span><span class="err">\</span><span class="s"> Text</span><span class="err">\</span><span class="s"> 2/Packages'</span>
+
+<span class="n">SCOPES</span> <span class="o">=</span> <span class="s">'https://www.googleapis.com/auth/drive.file'</span>
+<span class="n">store</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">Storage</span><span class="p">(</span><span class="s">'storage.json'</span><span class="p">)</span>
+<span class="n">creds</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">creds</span> <span class="ow">or</span> <span class="n">creds</span><span class="o">.</span><span class="n">invalid</span><span class="p">:</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">flow_from_clientsecrets</span><span class="p">(</span><span class="s">'client_secret.json'</span><span class="p">,</span> <span class="n">SCOPES</span><span class="p">)</span>
+    <span class="n">creds</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">run_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span> \
+        <span class="k">if</span> <span class="n">flags</span> <span class="k">else</span> <span class="n">tools</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span> <span class="n">store</span><span class="p">)</span>
+<span class="n">DRIVE</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s">'drive'</span><span class="p">,</span> <span class="s">'v3'</span><span class="p">,</span> <span class="n">http</span><span class="o">=</span><span class="n">creds</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="n">Http</span><span class="p">()))</span>
+
+
+<span class="k">def</span> <span class="nf">zipfiles</span><span class="p">():</span>  <span class="c"># get files to /tmp/for_gd/</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'rm -rf /tmp/for_gd'</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'mkdir /tmp/for_gd'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'clear for_gd'</span><span class="p">)</span>
+
+    <span class="c"># ~/.*rc</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'zip -qr /tmp/for_gd/rc.zip  ~/.*rc*'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'zip *rc*'</span><span class="p">)</span>
+
+    <span class="c"># ~/.gitconfig</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'zip -qr /tmp/for_gd/gitconfig.zip ~/.gitconfig'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'zip gitconfig'</span><span class="p">)</span>
+
+    <span class="c"># ~/.shell</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'zip -qr /tmp/for_gd/shell.zip ~/.shell'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'zip ~/.shell'</span><span class="p">)</span>
+
+    <span class="c"># bittorent</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'mkdir /tmp/for_gd/utorrent'</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'cp ~/Library/Application</span><span class="err">\</span><span class="s"> Support/uTorrent/*.torrent /tmp/for_gd/utorrent'</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'zip -qr /tmp/for_gd/torrent.zip  /tmp/for_gd/utorrent'</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'rm  -rf /tmp/for_gd/utorrent'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'zip utorrent'</span><span class="p">)</span>
+
+    <span class="c"># st</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'cp </span><span class="si">%</span><span class="s">s/Color</span><span class="err">\</span><span class="s"> Scheme</span><span class="err">\</span><span class="s"> -</span><span class="err">\</span><span class="s"> Default/st.tmTheme /tmp/for_gd/st.tmTheme.txt'</span> <span class="o">%</span> <span class="n">stp</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'cp </span><span class="si">%</span><span class="s">s/C++/C++.sublime-build /tmp/for_gd/C++.sublime-build.txt'</span> <span class="o">%</span> <span class="n">stp</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'cp </span><span class="si">%</span><span class="s">s/Python/Python.sublime-build /tmp/for_gd/Python.sublime-build.txt'</span> <span class="o">%</span> <span class="n">stp</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'zip st files'</span><span class="p">)</span>
+
+
+    <span class="c"># restore</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'cp ~/.shell/restore.sh /tmp/for_gd/restore.sh'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'zip restore'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">truncate</span><span class="p">(</span><span class="n">sn</span><span class="p">):</span>
+    <span class="n">folderID</span> <span class="o">=</span> <span class="n">week</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sn</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">folderID</span><span class="p">:</span>
+        <span class="n">DRIVE</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">fileId</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="n">sn</span><span class="p">,</span>
+                <span class="s">'mimeType'</span><span class="p">:</span> <span class="s">"application/vnd.google-apps.folder"</span><span class="p">,</span>
+                <span class="s">'parents'</span><span class="p">:</span> <span class="p">[</span><span class="s">'0Bynd6vfYn_1DS3VYbEdyb1JrTHM'</span><span class="p">]</span>  <span class="c"># maintain_ID</span>
+                <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">DRIVE</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+    <span class="n">week</span><span class="p">[</span><span class="n">sn</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">'id'</span><span class="p">]</span>
+
+    <span class="n">jsonfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">weekjsonfile</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span>
+    <span class="n">jsonfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">week</span><span class="p">))</span>
+    <span class="n">jsonfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'done trucate cloud folder'</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="n">sn</span><span class="p">):</span>
+    <span class="n">filelist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">bakpath</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bakpath</span><span class="p">,</span> <span class="nb">file</span><span class="p">)):</span>
+            <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
+
+    <span class="n">folderID</span> <span class="o">=</span> <span class="n">week</span><span class="p">[</span><span class="n">sn</span><span class="p">]</span>
+    <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'uploading '</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="nb">file</span><span class="p">,</span> <span class="s">'mimeType'</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s">'parents'</span><span class="p">:</span> <span class="p">[</span><span class="n">folderID</span><span class="p">]}</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bakpath</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">DRIVE</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">media_body</span><span class="o">=</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'echo "    upload </span><span class="si">%</span><span class="s">s done " &gt;&gt; up.log'</span> <span class="o">%</span> <span class="nb">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'echo "    upload </span><span class="si">%</span><span class="s">s error" &gt;&gt; up.log'</span> <span class="o">%</span> <span class="nb">file</span><span class="p">)</span>
+
+<span class="n">zipfiles</span><span class="p">()</span>
+<span class="n">jsonfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">weekjsonfile</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span>
+<span class="n">week</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">jsonfile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">sn</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">w"</span><span class="p">)</span>
+<span class="n">truncate</span><span class="p">(</span><span class="n">sn</span><span class="p">)</span>
+<span class="n">upload</span><span class="p">(</span><span class="n">sn</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'rm -rf /tmp/for_gd'</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">'echo "All done</span><span class="se">\n\n</span><span class="s">" &gt;&gt; up.log'</span><span class="p">)</span>
+
+</code></pre>
+</div>
+
+    </div>
+
+    <hr>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="categories#使用配置-ref">
+    		使用配置 <span>6</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="tags#备份-ref">备份 <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+
+
+    <div class="pagination pagination-lg">
+      
+      <ul>
+      
+        <li class="prev"><a href="/posts/awk%E7%AE%80%E4%BB%8B" title="awk简介">&larr; Previous（前一篇）</a></li>
+      
+        <li><a href="">Archive（目录）</a></li>
+      
+        <li class="next"><a href="/posts/%E5%85%A5%E9%97%A8haskell" title="入门haskell">Next（后一篇） &rarr;</a></li>
+      
+      </ul>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).ready(
+        function expand() {
+            var node = $("h1")
+            for (var i = 0; i < node.length; i++) {
+                var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "    " + t.innerText
+            }
+
+            node = $("h2")
+            for (var i = 0; i < node.length; i++) {
+                  var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "   " + t.innerText
+            }
+
+            
+        }
+    );
+</script>
+    
+  </div>
+</div>
+
+      </div>
+      <hr/>
+      <center> <footer>
+        &copy; 2016 Yaccai with help from <a href="http://jekyllrb.com" target="_blank" title="The simple, blog-aware, static site generator.">Jekyll</a>. Hosted by <a href="https://pages.github.com/" target="_blank" title="GitHub Pages">GitHub</a>.
+        <br><br>
+      </footer> </center>
+
+
+    </div>
+
+
+  </body>
+</html>
+

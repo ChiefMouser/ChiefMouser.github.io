@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <head>
+    <meta charset="utf-8">
+    <title>堆的常用性质和操作</title>
+    
+    <meta name="author" content="Yaccai">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- <link href="/css/blog.css" rel="stylesheet" type="text/css" media="all"> -->
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/bootstrap.2.2.2.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/jquery.tocLight.js"></script>
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">yaccai</a>
+          <ul class="nav">
+            <li><a href="/explore.html">Explore / 浏览</a></li>
+            <li><a href="/archive.html">Archive / 存档</a></li>
+            <li><a href="/about.html">About / 关于</a></li>
+
+<!--             <li><a href="https://github.com/yaccai">Github</a></li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h11>堆的常用性质和操作 </h11>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span> </span>
+    </div>
+    <div class="content">
+      <div id="toc-container">
+  <table class="toc" id="toc">
+    <tbody>
+      <tr>
+        <td>
+          <div id="toctitle">
+            <h2>Contents</h2>
+          </div>
+          <ul>
+            <li class="toc_level-1 toc_section-1">
+              <a href="#tocAnchor-1-1"><span class="tocnumber">1</span> <span class="toctext">性质</span></a>
+            </li>
+            <li class="toc_level-1 toc_section-2">
+              <a href="#tocAnchor-1-2"><span class="tocnumber">2</span> <span class="toctext">操作</span></a>
+              <ul>
+                <li class="toc_level-2 toc_section-3">
+                  <a href="#tocAnchor-1-2-1"><span class="tocnumber">2.1</span> <span class="toctext">插入一个元素</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-4">
+                  <a href="#tocAnchor-1-2-2"><span class="tocnumber">2.2</span> <span class="toctext">删除一个元素</span></a>
+                </li>
+              </ul>
+            </li>
+            <li class="toc_level-1 toc_section-5">
+              <a href="#tocAnchor-1-5"><span class="tocnumber">3</span> <span class="toctext">典型应用</span></a>
+              <ul>
+                <li class="toc_level-2 toc_section-6">
+                  <a href="#tocAnchor-1-5-1"><span class="tocnumber">3.1</span> <span class="toctext">堆排序</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-7">
+                  <a href="#tocAnchor-1-5-2"><span class="tocnumber">3.2</span> <span class="toctext">数据流中位数</span></a>
+                </li>
+              </ul>
+            </li>
+            <li class="toc_level-1 toc_section-8">
+              <a href="#tocAnchor-1-8"><span class="tocnumber">4</span> <span class="toctext">其他的堆</span></a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div><p>堆相当于顺序存储的，满的binary-tree，通常用数组实现。堆的特点，在于常数时间找到最大/最小的节点，并在O(lgn)增加删除元素。java的LinkedList也可以实现heap，但元素的索引是通过下标进行，实际上还是数组.</p>
+
+<!-- more -->
+
+<h1 id="tocAnchor-1-1">性质</h1>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">fa</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">so</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+<span class="n">so</span> <span class="o">&lt;=</span> <span class="n">fa</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="n">fa</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span>
+</code></pre>
+</div>
+
+<p>由于使用数组实现，通常预分配足够空间，另外的变量记录heap的容量</p>
+
+<p>大堆，保持[fa]的key比两个[so]大</p>
+
+<p>小堆，保持[fa]的key比两个[so]小</p>
+
+<h1 id="tocAnchor-1-2">操作</h1>
+
+<p>通常不支持直接删除/添加到中间任意位置的操作。都是在头部或尾部进行，然后调整以保持性质</p>
+
+<h2 id="tocAnchor-1-2-1">插入一个元素</h2>
+
+<p>由于堆是满的二叉树，而且顺序存储，所以不能在中间位置随意插入。通常应该：</p>
+
+<ol>
+  <li>将堆容量增加1，在尾部新增加的这个空间，加入新元素</li>
+  <li>和fa节点比较，调整位置以满足堆性质</li>
+  <li>循环2</li>
+</ol>
+
+<h2 id="tocAnchor-1-2-2">删除一个元素</h2>
+
+<ol>
+  <li>将尾部最后一个元素，复制到删除位置</li>
+  <li>删除尾部元素</li>
+  <li>在元删除位置调整
+    <ul>
+      <li>可能要向上调，也可能向下调整</li>
+      <li>如果删除位置在0，就不存在这个两难的问题</li>
+    </ul>
+  </li>
+</ol>
+
+<h1 id="tocAnchor-1-5">典型应用</h1>
+
+<h2 id="tocAnchor-1-5-1">堆排序</h2>
+
+<ul>
+  <li>将数组堆化</li>
+  <li>不断将首元素和尾部元素交换，容量也随之减小，去除的顺序就是元素依次排序</li>
+</ul>
+
+<h2 id="tocAnchor-1-5-2">数据流中位数</h2>
+
+<p>数据顺序、流式依次得到，求每次加入新数据后，所有得到数据的中位数。</p>
+
+<ul>
+  <li>建立两个堆，一个大一个小，大堆保存较小的一半数据，小堆保存交大的一半数据。</li>
+  <li>总体为奇数个数据时，大堆容量可以多出一个，偶数时保持相等</li>
+  <li>fetch到新数据时，根据大小push到对应的堆中去，然后根据个数决定是否要pop一个到另外一个堆中去。</li>
+  <li>中位数就总是大堆的堆顶，第0个元素</li>
+</ul>
+
+<p>blah…看代码吧</p>
+
+<h1 id="tocAnchor-1-8">其他的堆</h1>
+
+<p>
+  <a href="http://dl.acm.org/citation.cfm?id=359478">二项堆</a>
+</p>
+
+
+    </div>
+
+    <hr>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="categories#算法-ref">
+    		算法 <span>5</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="tags#数据结构-ref">数据结构 <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+
+
+    <div class="pagination pagination-lg">
+      
+      <ul>
+      
+        <li class="prev"><a href="/posts/cpp%E6%9C%AA%E5%AE%9A%E4%B9%89%E8%A1%8C%E4%B8%BA" title="cpp未定义行为">&larr; Previous（前一篇）</a></li>
+      
+        <li><a href="">Archive（目录）</a></li>
+      
+        <li class="next"><a href="/posts/effective_java" title="effective_java">Next（后一篇） &rarr;</a></li>
+      
+      </ul>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).ready(
+        function expand() {
+            var node = $("h1")
+            for (var i = 0; i < node.length; i++) {
+                var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "    " + t.innerText
+            }
+
+            node = $("h2")
+            for (var i = 0; i < node.length; i++) {
+                  var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "   " + t.innerText
+            }
+
+            
+        }
+    );
+</script>
+    
+  </div>
+</div>
+
+      </div>
+      <hr/>
+      <center> <footer>
+        &copy; 2016 Yaccai with help from <a href="http://jekyllrb.com" target="_blank" title="The simple, blog-aware, static site generator.">Jekyll</a>. Hosted by <a href="https://pages.github.com/" target="_blank" title="GitHub Pages">GitHub</a>.
+        <br><br>
+      </footer> </center>
+
+
+    </div>
+
+
+  </body>
+</html>
+

@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <head>
+    <meta charset="utf-8">
+    <title>effective_java</title>
+    
+    <meta name="author" content="Yaccai">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- <link href="/css/blog.css" rel="stylesheet" type="text/css" media="all"> -->
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/bootstrap.2.2.2.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/jquery.tocLight.js"></script>
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">yaccai</a>
+          <ul class="nav">
+            <li><a href="/explore.html">Explore / 浏览</a></li>
+            <li><a href="/archive.html">Archive / 存档</a></li>
+            <li><a href="/about.html">About / 关于</a></li>
+
+<!--             <li><a href="https://github.com/yaccai">Github</a></li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h11>effective_java </h11>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span> </span>
+    </div>
+    <div class="content">
+      <div id="toc-container">
+  <table class="toc" id="toc">
+    <tbody>
+      <tr>
+        <td>
+          <div id="toctitle">
+            <h2>Contents</h2>
+          </div>
+          <ul>
+            <li class="toc_level-1 toc_section-1">
+              <a href="#tocAnchor-1-1"><span class="tocnumber">1</span> <span class="toctext">通用</span></a>
+              <ul>
+                <li class="toc_level-2 toc_section-2">
+                  <a href="#tocAnchor-1-1-1"><span class="tocnumber">1.1</span> <span class="toctext">使用静态工厂函数 vs 构造函数</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-3">
+                  <a href="#tocAnchor-1-1-2"><span class="tocnumber">1.2</span> <span class="toctext">单例模式</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-4">
+                  <a href="#tocAnchor-1-1-3"><span class="tocnumber">1.3</span> <span class="toctext">工具类的强化不可实例化</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-5">
+                  <a href="#tocAnchor-1-1-4"><span class="tocnumber">1.4</span> <span class="toctext">避免创建重复的对象</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-6">
+                  <a href="#tocAnchor-1-1-5"><span class="tocnumber">1.5</span> <span class="toctext">消除过期的对象引用</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-7">
+                  <a href="#tocAnchor-1-1-6"><span class="tocnumber">1.6</span> <span class="toctext">避免使用 final 函数</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-8">
+                  <a href="#tocAnchor-1-1-7"><span class="tocnumber">1.7</span> <span class="toctext">改写equals方法</span></a>
+                </li>
+                <li class="toc_level-2 toc_section-9">
+                  <a href="#tocAnchor-1-1-8"><span class="tocnumber">1.8</span> <span class="toctext">怎样修改clone</span></a>
+                </li>
+              </ul>
+            </li>
+            <li class="toc_level-1 toc_section-10">
+              <a href="#tocAnchor-1-10"><span class="tocnumber">2</span> <span class="toctext">泛型</span></a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div><p>effective java 的简单总结</p>
+
+<!-- more -->
+
+<h1 id="tocAnchor-1-1">通用</h1>
+
+<h2 id="tocAnchor-1-1-1">使用静态工厂函数 vs 构造函数</h2>
+
+<h3 id="section-1">优点</h3>
+<ul>
+  <li>名称便于区别，构造函数只有一个名字。工厂函数可以自定义，包含一定意义</li>
+  <li>可以避免重复创建对象，引申单利模式</li>
+  <li>可以返回子类，自定义时对象时，比如要求一个List,可以返回一个ArrayList，但是构造函数只会创建base</li>
+</ul>
+
+<h3 id="section-2">缺点</h3>
+
+<p>。。。</p>
+
+<h2 id="tocAnchor-1-1-2">单例模式</h2>
+
+<ul>
+  <li>public的静态成员</li>
+  <li>静态工厂函数</li>
+</ul>
+
+<h2 id="tocAnchor-1-1-3">工具类的强化不可实例化</h2>
+
+<ul>
+  <li>不要使用abstract，这回误导，以为这是一个需要继承实现的类</li>
+  <li>使用private的构造函数，避免编译器修改，这也导致了不能被继承</li>
+</ul>
+
+<h2 id="tocAnchor-1-1-4">避免创建重复的对象</h2>
+
+<p>对比：</p>
+
+<p>String s = new String(“hello”);<br />
+String s = “hello”;</p>
+
+<ul>
+  <li>可以使用工厂方法，如同上面所说</li>
+  <li>避免自己维护对象pool，代价非常大而且出错率高</li>
+</ul>
+
+<h2 id="tocAnchor-1-1-5">消除过期的对象引用</h2>
+<p>过期引用</p>
+
+<p>使用数组实现一个stack，存储某个类的对象，随着pop，stack的容量减小。<br />
+这时不应该仅仅减小下标，因为不把pop出的部分改为null，就会出现一个过期的引用，由于这个引用在程序中再也不会访问到了，但是对于垃圾回收机制，这个引用是有效的，所以pop出的对象无法被回收内存。<br />
+而且如果以后如果有越界引用的情况出现，就会得到null，而不是悄无声息的使用上一次的对象</p>
+
+<p>上面例子的本质，stack类自己管理了内存，二垃圾回收机制并不知情</p>
+
+<p>如果一个calss自己管理内存就应该小心内存泄漏的问题</p>
+
+<h2 id="tocAnchor-1-1-6">避免使用 final 函数</h2>
+
+<p>从一个对象变得不可access到他被真正的回收，这之间的时间是不确定的。final 函数是不可靠的
+final 函数有可能根本就不执行</p>
+
+<p>使用显式的终止方法，并且在trycatch的额finally块中使用</p>
+
+<p>更进一步的讨论？</p>
+
+<h2 id="tocAnchor-1-1-7">改写equals方法</h2>
+
+<p>需要自己的 “相等逻辑”</p>
+
+<p>实现equals的几个要求：</p>
+
+<ul>
+  <li>自反</li>
+  <li>对称</li>
+  <li>传递</li>
+  <li>一致</li>
+  <li>非空x 比较 null一定为 false</li>
+  <li>总是要修改 hashCode：“相等的对象应该具有相等散列码”，在集合类中郭勇明显</li>
+  <li>== 用于比较对象的引用地址</li>
+  <li>instanceof检查是否为正确类型</li>
+</ul>
+
+<h2 id="tocAnchor-1-1-8">怎样修改clone</h2>
+
+<p>如果一个类实现了clonable接口，则clone方法(如果可以调用的话)，应该此对象的”逐域拷贝“</p>
+
+<p>通常接口是用来实现某些功能，clonable接口则改变了超累中一个受保护方法的行为</p>
+
+<p>进一步？</p>
+
+<h1 id="tocAnchor-1-10">泛型</h1>
+
+<ul>
+  <li>不要使用原生的类型，就是去掉尖括号的情况，会失去安全性的保护</li>
+  <li>@suppressWarnings(“ … “)</li>
+  <li>协变 convariant
+    <ul>
+      <li>如果Sub为Sup的子类型，那么Sub[] 也就是 Sup[]的子类型</li>
+      <li>泛型是不可协变的</li>
+      <li>List<object> lo = new ArrayList<long>是错误的，变异会出错</long></object></li>
+    </ul>
+  </li>
+</ul>
+
+    </div>
+
+    <hr>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="categories#CSE-ref">
+    		CSE <span>8</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="tags#java-ref">java <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+
+
+    <div class="pagination pagination-lg">
+      
+      <ul>
+      
+        <li class="prev"><a href="/posts/%E5%A0%86%E7%9A%84%E5%B8%B8%E7%94%A8%E6%80%A7%E8%B4%A8%E5%92%8C%E6%93%8D%E4%BD%9C" title="堆的常用性质和操作">&larr; Previous（前一篇）</a></li>
+      
+        <li><a href="">Archive（目录）</a></li>
+      
+        <li class="next"><a href="/posts/leetcode%E8%A7%A3%E9%A2%98%E6%80%BB%E7%BB%93" title="leetcode解题总结">Next（后一篇） &rarr;</a></li>
+      
+      </ul>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).ready(
+        function expand() {
+            var node = $("h1")
+            for (var i = 0; i < node.length; i++) {
+                var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "    " + t.innerText
+            }
+
+            node = $("h2")
+            for (var i = 0; i < node.length; i++) {
+                  var t = node[i]
+                  var num = $("[href='#" + t.id + "']").children("span.tocnumber")
+                  t.innerText = num.text() + "   " + t.innerText
+            }
+
+            
+        }
+    );
+</script>
+    
+  </div>
+</div>
+
+      </div>
+      <hr/>
+      <center> <footer>
+        &copy; 2016 Yaccai with help from <a href="http://jekyllrb.com" target="_blank" title="The simple, blog-aware, static site generator.">Jekyll</a>. Hosted by <a href="https://pages.github.com/" target="_blank" title="GitHub Pages">GitHub</a>.
+        <br><br>
+      </footer> </center>
+
+
+    </div>
+
+
+  </body>
+</html>
+
